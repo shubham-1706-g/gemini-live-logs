@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Gemini Live · Usage lab</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<main>
+  <header><div><span class="eyebrow">LOCAL VOICE LAB</span><h1>Gemini Live</h1><p>A conversation, with the numbers behind it.</p></div><span id="status" class="status" role="status">Loading configuration</span></header>
+  <div id="notice" class="notice" role="status" hidden></div>
+  <section class="workspace" aria-label="Voice conversation and usage">
+    <div class="conversation">
+      <div class="section-head"><h2>Conversation</h2><span id="timer" class="mono">00:00</span></div>
+      <div class="voice-panel"><div class="mic-symbol" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="12" y="4" width="8" height="16" rx="4"/><path d="M8 15v2a8 8 0 0 0 16 0v-2M16 25v4M11 29h10"/></svg></div><h3 id="voice-label">Ready when you are</h3><p id="voice-help">Start a conversation and allow your microphone.<br>Use headphones for the clearest conversation.</p><div class="controls"><button id="start" disabled>Start conversation</button><button id="mute" class="secondary" disabled aria-pressed="false">Mute mic</button><button id="stop" class="secondary" disabled>End</button></div></div>
+      <div class="section-head transcript-head"><h2>Transcript</h2><span class="subtle">Saved to your local log</span></div>
+      <div id="transcript" class="transcript" role="log" aria-live="polite"><p class="empty">Your conversation will appear here.</p></div>
+    </div>
+    <aside class="usage">
+      <span class="eyebrow">THIS SESSION · USD</span><div id="cost" class="cost mono">—</div><p id="cost-caption">Waiting for Google usage metadata</p>
+      <div class="usage-title"><h2>Token breakdown</h2><span>$/1M tokens</span></div>
+      <table class="breakdown"><thead><tr><th>Category</th><th>Tokens</th><th>Rate</th></tr></thead><tbody>
+        <tr><td>Text input</td><td id="inputText">0</td><td>$0.50</td></tr><tr><td>Audio input</td><td id="inputAudio">0</td><td>$3.00</td></tr><tr><td>Text output</td><td id="outputText">0</td><td>$2.00</td></tr><tr><td>Audio output</td><td id="outputAudio">0</td><td>$12.00</td></tr><tr><td>Thinking</td><td id="thoughts">0</td><td>$2.00</td></tr>
+      </tbody></table>
+      <p class="fine">Paid-tier list-price estimate. Actual billing can differ with free-tier usage, credits, or missing usage reports. Transcript text is billed output.</p>
+      <dl class="session-details"><div><dt>Usage reports</dt><dd id="reports">0</dd></div><div><dt>Session</dt><dd id="session-id">Not started</dd></div><div><dt>Local log</dt><dd id="log-status">Not created</dd></div></dl>
+      <a id="download" class="download" hidden>Download session JSONL ↗</a>
+      <details><summary>How the estimate works</summary><p>Each Google usage report is priced by modality, then added to the session. Full prompt context is counted again when reported on later turns. Thinking tokens use the text output rate.</p><p>Original provider messages and raw metadata are saved before calculation. The pricing version is preserved for offline replay. Reports with missing breakdowns, cached tokens, or unsupported modalities are marked unpriced.</p><p>Aggregation assumes each usage message is a generation record, not a session total. Check the raw reports and compare with Google billing before relying on this estimate.</p><a href="https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-flash-native-audio" target="_blank" rel="noreferrer">Google pricing ↗</a></details>
+    </aside>
+  </section>
+  <section class="ledger"><div class="section-head"><div><h2>Usage ledger</h2><p>Original usage + protocol logs saved for offline repricing.</p></div><span id="ledger-count" class="subtle">0 reports</span></div><div class="table-scroll"><table><thead><tr><th>Report / turn</th><th>Received</th><th>Input tokens</th><th>Output + thinking</th><th>Estimated USD</th><th>Evidence</th></tr></thead><tbody id="ledger-rows"><tr><td colspan="6" class="empty">No usage reports yet. Start a conversation to collect real data.</td></tr></tbody></table></div></section>
+  <section class="history"><div class="section-head"><div><h2>Saved sessions</h2><p id="history-total">Loading local logs…</p></div><button class="secondary" id="refresh">Refresh</button></div><div id="history-list"></div></section>
+  <footer><span id="model">Gemini native audio</span><span>Local JSONL logs · beacon lifecycle events · 10-minute session limit</span></footer>
+</main><script type="module" src="/app.js"></script>
+</body></html>

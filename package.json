@@ -1,0 +1,20 @@
+{
+  "name": "gemini-live-logs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local Gemini Live voice chat with an auditable usage and cost ledger",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --watch --env-file-if-exists=.env server.js",
+    "test": "node --test",
+    "report": "node scripts/report.js",
+    "reprice": "node scripts/reprice.js"
+  },
+  "engines": {
+    "node": ">=22.9"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}
