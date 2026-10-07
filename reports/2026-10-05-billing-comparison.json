@@ -1,0 +1,104 @@
+{
+  "title": "Gemini Live cost check: our logs vs Google billing",
+  "date": "2026-10-05",
+  "model": "gemini-2.5-flash-native-audio-preview-12-2025",
+  "googleProject": "OmniDel",
+  "apiKey": "Shubham-test",
+  "timeWindowUtc": "2026-10-05 14:08 to 14:15 (billing hour 14:00 UTC)",
+  "ourLogs": {
+    "sessions": [
+      {
+        "id": "c59744ab-9789-4e87-858a-8057ae3c04b4",
+        "usageReports": 5,
+        "inputText": 4326,
+        "inputAudio": 98,
+        "outputAudio": 837,
+        "thinking": 163
+      },
+      {
+        "id": "f369087d-dee5-465a-9591-a71f0883b4f6",
+        "usageReports": 1,
+        "inputText": 434,
+        "inputAudio": 1,
+        "outputAudio": 121,
+        "thinking": 35
+      }
+    ],
+    "totalTokens": {
+      "inputText": 4760,
+      "inputAudio": 99,
+      "outputText": 0,
+      "outputAudio": 958,
+      "thinking": 198
+    }
+  },
+  "pricingFormula": {
+    "source": "https://ai.google.dev/gemini-api/docs/pricing",
+    "usdPerMillionTokens": {
+      "inputText": 0.5,
+      "inputAudio": 3.0,
+      "outputText": 2.0,
+      "outputAudio": 12.0,
+      "thinking": 2.0
+    },
+    "formula": "costUsd = (inputText*0.5 + inputAudio*3 + outputText*2 + outputAudio*12 + thinking*2) / 1,000,000",
+    "method": "Sum every usageMetadata report Google sends (event-sum). Each report is one billed generation.",
+    "calculation": {
+      "inputText": "4760 x 0.5 / 1M = $0.002380",
+      "inputAudio": "99 x 3 / 1M = $0.000297",
+      "outputAudio": "958 x 12 / 1M = $0.011496",
+      "thinking": "198 x 2 / 1M = $0.000396",
+      "totalUsd": 0.014569,
+      "totalInr": 1.39846,
+      "geminiSpendInr": 1.36,
+      "totalWithoutThinkingUsd": 0.014173,
+      "totalWithoutThinkingInr": 1.360447
+    }
+  },
+  "googleBilling": {
+    "source": "BigQuery detailed billing export, dataset Omnidel1869, hour 2026-10-05 14:00 UTC",
+    "usdToInrRate": 95.98875,
+    "rows": [
+      {
+        "sku": "BidiGenerateContent text input token count for Gemini 2.5 Flash Native Audio",
+        "tokens": 4760,
+        "usd": 0.002380,
+        "inr": 0.228453
+      },
+      {
+        "sku": "BidiGenerateContent audio input token count for Gemini 2.5 Flash Native Audio",
+        "tokens": 99,
+        "usd": 0.000297,
+        "inr": 0.028508
+      },
+      {
+        "sku": "BidiGenerateContent audio output token count for Gemini 2.5 Flash Native Audio",
+        "tokens": 958,
+        "usd": 0.011496,
+        "inr": 1.103486
+      }
+    ],
+    "thinkingRow": "none (thinking tokens were not billed)",
+    "totalUsd": 0.014173,
+    "totalInr": 1.360447,
+    "aiStudioSpendPageInr": 1.36
+  },
+  "comparison": {
+    "tokensMatch": {
+      "inputText": "4760 = 4760",
+      "inputAudio": "99 = 99",
+      "outputAudio": "958 = 958"
+    },
+    "ourEstimateUsd": 0.014569,
+    "ourEstimateInr": 1.39846,
+    "ourEstimateWithoutThinkingUsd": 0.014173,
+    "ourEstimateWithoutThinkingInr": 1.360447,
+    "googleBilledUsd": 0.014173,
+    "googleBilledInr": 1.360447,
+    "differenceUsd": 0.000396,
+    "differenceInr": 0.038012,
+    "differencePercent": 2.79,
+    "reason": "Our formula charges 198 thinking tokens at $2/M. Google did not bill thinking tokens for this model. Without thinking, our estimate equals Google's bill exactly.",
+    "exchangeRateIsNotTheCause": true
+  }
+}

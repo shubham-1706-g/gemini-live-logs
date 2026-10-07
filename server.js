@@ -18,13 +18,21 @@ export function createApp({ apiKey = process.env.GEMINI_API_KEY, logDir = fileUR
   const files = new Map([['/', ['index.html', 'text/html']], ['/app.js', ['app.js', 'text/javascript']],
     ['/audio-worklet.js', ['audio-worklet.js', 'text/javascript']], ['/style.css', ['style.css', 'text/css']]]);
   const json = (res, code, value) => { res.writeHead(code, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(value)); };
+  // Localhost always; ngrok tunnels (HTTPS, so the browser allows the mic) via suffix allowlist. Extend with ALLOWED_HOST_SUFFIXES=.example.com,...
+  const tunnelSuffixes = ['.ngrok-free.app', '.ngrok-free.dev', '.ngrok.app', '.ngrok.dev', '.ngrok.io', ...(process.env.ALLOWED_HOST_SUFFIXES || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean)];
+  function allowedHost(host = '') {
+    if (/^(localhost|127\.0\.0\.1):\d+$/.test(host)) return true;
+    const h = host.toLowerCase();
+    return /^[a-z0-9.-]+$/.test(h) && tunnelSuffixes.some(s => h.endsWith(s));
+  }
   function sameOrigin(req) {
-    return req.headers.origin === `http://${req.headers.host}`;
+    const host = req.headers.host;
+    return req.headers.origin === `http://${host}` || (req.headers.origin === `https://${host}` && !/^(localhost|127\.0\.0\.1):/.test(host));
   }
   const server = http.createServer(async (req, res) => {
     try {
       // Local-only tool. Host check also rejects DNS rebinding to this listener.
-      if (!/^(localhost|127\.0\.0\.1):\d+$/.test(req.headers.host || '')) return json(res, 403, { error: 'Local host only' });
+      if (!allowedHost(req.headers.host)) return json(res, 403, { error: 'Host not allowed' });
       if (req.headers.origin && !sameOrigin(req)) return json(res, 403, { error: 'Origin rejected' });
       res.setHeader('X-Content-Type-Options', 'nosniff');
       res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'");
@@ -71,7 +79,7 @@ export function createApp({ apiKey = process.env.GEMINI_API_KEY, logDir = fileUR
   });
   const wss = new WebSocketServer({ noServer: true, maxPayload: 64 * 1024 });
   server.on('upgrade', (req, socket, head) => {
-    if (req.url !== '/live' || !sameOrigin(req) || !/^(localhost|127\.0\.0\.1):\d+$/.test(req.headers.host || '')) {
+    if (req.url !== '/live' || !sameOrigin(req) || !allowedHost(req.headers.host)) {
       socket.write('HTTP/1.1 403 Forbidden\r\n\r\n'); return socket.destroy();
     }
     wss.handleUpgrade(req, socket, head, ws => wss.emit('connection', ws));
